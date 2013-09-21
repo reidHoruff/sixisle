@@ -1,0 +1,7 @@
+{% for isle in isles %}
+  <p>
+    <a href="#" class="red" data-sniper="/async/del_isle_perm?id={{isle.id}}">[delete]</a>
+    <a href="#" class="green" data-sniper="/async/restore_isle?id={{isle.id}}">[restore]</a>
+    {{isle.name}}
+  </p>
+{% endfor %}

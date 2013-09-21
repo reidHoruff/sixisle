@@ -1,0 +1,85 @@
+body {
+  padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+#nav-bar{
+  background: #FAF7F7;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav > li > a.active{
+  /*background: #e0e0e5*/
+}
+
+#nav-list-left > li > a{
+  color: #444;
+  font-weight: bold;
+  text-shadow: none;
+  font-size: 14px;
+}
+
+#nav-list-left > li > a:hover{
+  color: black;
+}
+
+#nav-list-right > li > a{
+  color: #444;
+  font-weight: bold;
+  text-shadow: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+#nav-list-right > li > a:hover{
+  color: black;
+}
+
+
+/* buttons */
+.red-button{
+  background: #DA4F49;
+  color:white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}   
+
+.red-button:hover{
+  color: white;
+  background: #CA4F49;
+}       
+
+.grey-button{
+  background: #eee;
+  color: black;
+}
+
+.grey-button:hover{
+  background: #ddd;
+  color: black;
+}
+
+.datepicker{
+  z-index:1151;
+  color: white;
+}
+
+input, textarea{
+  color: black !important;
+}
+
+#nav-list-left > li > a > h4 {
+  margin:0;
+  padding:0;
+  font-size: 26;
+}
+
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
+}
+
+.modal-body > form {
+}

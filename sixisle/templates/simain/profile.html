@@ -1,0 +1,12 @@
+{% extends "simain/base.html" %}
+
+{% block css %}
+  <link href="/static/resources/css/profile.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block container %}
+  <h2>profile</h2>
+  username: {{user.username}}
+  <br />
+  is happy: {{user.talk}}
+{% endblock %}

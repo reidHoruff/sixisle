@@ -1,0 +1,11 @@
+table#isles > thead > tr > th#date-heading {
+  width: 200px;
+} 
+
+table.fixed {
+  table-layout: fixed;
+}
+
+#isles-table {
+  margin-top: 20px;
+}

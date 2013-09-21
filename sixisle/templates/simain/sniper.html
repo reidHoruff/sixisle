@@ -1,0 +1,35 @@
+{% load sniper_onload %}
+<html>
+  <head>
+    {% sniper_onload %}
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="/static/resources/js/sniper.js"></script>
+    <style>
+      .children-container {
+        padding-left: 20px;
+      }
+      .comment-body {
+        background: yellow;
+        padding: 5px;
+      }
+      .error {
+        color: red;
+      }
+      p {
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>welcome to some form</h2>
+    <div id="comments">
+    </div>
+
+    <script>
+      var s = new Sniper();
+    </script>
+  </body>
+
+</html>

@@ -1,0 +1,31 @@
+<table id="isles" class="table table-bordered fixed">
+  <thead>
+    <tr>
+      <th id="date-heading"></th>
+      {% for isle in isles %} 
+        <th><a href="#" data-sniper="{% url 'dialog_isle_info' %}?id={{isle.id}}">{{isle.name}}</a></th>
+      {% endfor %}
+    </tr>
+  </thead>
+
+  <tbody>
+  {% for on_date in tasks %}
+    <tr>
+      <td>
+        {{on_date.date|date:"l F, j"}}
+      </td>
+      {% for tasks in on_date.tasks %}
+        <td>
+          {% for task in tasks %}
+            {{task.name}}
+            <br />
+          {% endfor %}
+        </td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<script>
+</script>

@@ -1,0 +1,58 @@
+{% extends "simain/dialogs/base.html" %}
+
+{% block header %}
+<h4>Create a New Task</h4>
+{% endblock %}
+
+{% block body %}
+<form id="curr-modal-form" class="form-horizontal" method="POST" action="/async/create_task/" data-sniper="true">
+  {% csrf_token %}
+  <div class="control-group">
+    <label class="control-label" for="taskName">Task Name</label>
+    <div class="controls">
+      {{form.name}}
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="description">Description</label>
+    <div class="controls">
+      {{form.desc}}
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="date">Date</label>
+    <div class="controls">
+      {{form.date}}
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="date">{{form.isle.name}}</label>
+    <div class="controls">
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          For Isle <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          {% for isle in isles %}
+            <li><a href="#">{{isle.name}}</a></li>
+          {% endfor %}
+        </ul>
+     </div>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block footer %}
+<button type="submit" class="btn btn-primary modal-footer-submit">Create Task</button>
+{{block.super}}
+{% endblock %}
+
+{% block js %}
+{{block.super}}
+$('input#id_date').datepicker();
+{% endblock %}

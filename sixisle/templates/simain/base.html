@@ -1,0 +1,70 @@
+{% load sniper %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    {% sniper_onload %}
+    <link href="http://bootswatch.com/2/flatly/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <link href="{% static 'simain/resources/css/base.css' %}" type="text/css" rel="stylesheet"/>
+    <link href="{% static 'simain/resources/css/wonderbar.css' %}" type="text/css" rel="stylesheet"/>
+    <link href="{% static 'simain/resources/css/datepicker.css' %}" type="text/css" rel="stylesheet"/>
+    {% block css %}{% endblock %}
+  </head>
+
+  <body>
+    <!-- heading -->
+    <div class="navbar navbar-inverse navbar-fixed-top" id="nav-bar">
+
+      <!-- notification bar -->
+      <div id="wonderbar" class="wonderbar-type-notify">
+        <div class="container">
+          <div id="wonderbar-content"></div>
+          <a href="#" onclick="$wonder.hide()" id="wonderbar-close-button">&times;</a>
+        </div>
+      </div>
+
+      <!-- actual nav bar -->
+      <div class="container">
+        <div class="nav-collapse collapse">
+          <ul class="nav" id="nav-list-left">
+            <li>
+              <a id="logo-link" href="/"><h4>6ISLE</h4></a>
+            </li>
+            <li>
+              {% if user.is_authenticated %}
+                <a href="{% url 'view_isles' %}">isles</a>
+              {% endif %}
+            </li>
+          </ul>
+          <ul class="nav pull-right" id="nav-list-right">
+            <li class="nav">
+              {% if user.is_authenticated %}
+                <a href="#" data-sniper="/async/logout/">logout</a>
+              {% else %}
+                <a href="/login/">login</a>
+              {% endif %}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- end actual nav bar -->
+    </div>
+    <!-- end heading -->
+
+    <div id="wonderbar-offset"></div>
+
+    <div id="container" class="container-fluid">
+      {% block container %}{% endblock %}
+    <div />
+
+    <div id="dialogs"></div>
+
+    <!-- javascript yo -->
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="{% static 'simain/resources/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'sniper/sniper.js' %}"></script>
+    <script src="{% static 'simain/resources/js/wonderbar.js' %}"></script>
+    <script src="{% static 'simain/resources/js/bootstrap-datepicker.js' %}"></script>
+  </body>
+</html>

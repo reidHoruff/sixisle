@@ -1,0 +1,19 @@
+<div id="comment-{{id}}">
+  <div class="comment-body">
+    <p class="title">{{title}}</p>
+    <p class="body">{{body}}</p>
+  </div>
+  <div id="errors-{{id}}"></div>
+  <form method="POST" action="/submit_comment/" data-sniper="true">
+    {% csrf_token %}
+    <input type="text" name="title" />
+    <br />
+    <textarea name="body" ></textarea>
+    <br />
+    <input type="hidden" name="id" value={{id}} />
+    <input type="submit" value="post" />
+  </form>
+
+  <div class="children-container" id="comment-{{id}}-children">
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<form method="POST" action="{% url endpoint %}" data-sniper="true">
+  {% csrf_token %}
+  {{message|safe}} 
+  <button class="btn btn-small btn-danger red-button" type="submit">{{confirm}}</button>
+  {% if cancel %}
+  <button class="btn btn-small grey-button" onclick="$wonder.hide()" type="button">{{cancel}}</button>
+  {% endif %}
+
+  {% for key, val in data.items %}
+    <input type="hidden" name="{{key}}" value="{{val}}"></input>
+  {% endfor %}
+</form>

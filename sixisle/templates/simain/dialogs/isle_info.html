@@ -1,0 +1,21 @@
+{% extends "simain/dialogs/base.html" %}
+
+{% block header %}
+<h4>{{name}}</h4>
+{% endblock %}
+
+{% block body %}
+  {{name}}
+  <br/>
+  {{description}}
+{% endblock %}
+
+{% block footer %}
+  <a href="#" class="btn btn-primary" data-sniper="{% url 'dialog_edit_isle' %}?id={{id}}" type="submit">edit</a>
+  <a href="#" class="btn btn-danger" data-sniper="{% url 'async_del_isle' %}?id={{id}}" type="submit">delete</a>
+  {{block.super}}
+{% endblock %}
+
+{% block js %}
+{{block.super}}
+{% endblock %}

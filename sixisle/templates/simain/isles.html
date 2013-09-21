@@ -1,0 +1,14 @@
+{% extends "simain/base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link href="{% static 'simain/resources/css/isles.css' %}" type="text/css" rel="stylesheet"/>
+{% endblock %}
+
+{% block container %}
+  <h2>Isles</h2>
+  <a href="#" class="btn btn-primary" data-sniper="/dialogs/create_isle/">create isle</a> 
+  <a href="#" class="btn btn-primary" data-sniper="/dialogs/create_task/">create task</a>
+  <br>
+  <div id="isles-table"></div>
+{% endblock %}

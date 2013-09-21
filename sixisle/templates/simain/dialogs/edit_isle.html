@@ -1,0 +1,22 @@
+{% extends "simain/dialogs/base.html" %}
+
+{% block header %}
+<h4>edit: {{name}}</h4>
+{% endblock %}
+
+{% block body %}
+  {{name}}
+  <br/>
+  {{description}}
+  <form method="POST" action="/async/edit/" data-sniper="true">
+  </form>
+{% endblock %}
+
+{% block footer %}
+  <button type="submit" name="delete" value="true" class="btn btn-danger modal-footer-submit">Delete</button>
+  {{block.super}}
+{% endblock %}
+
+{% block js %}
+{{block.super}}
+{% endblock %}

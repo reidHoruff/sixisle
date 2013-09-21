@@ -1,0 +1,36 @@
+{% extends "simain/dialogs/base.html" %}
+
+{% block header %}
+<h4>Create a New Isle</h4>
+{% endblock %}
+
+{% block body %}
+<form id="curr-modal-form" class="form-horizontal" method="POST" action="/async/create_isle/" data-sniper="true">
+  {% csrf_token %}
+  <div class="control-group">
+    <label class="control-label" for="isleName">Isle Name</label>
+    <div class="controls">
+      <input type="text" name="name" id="isleName" placeholder="isle name">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="description">Description</label>
+    <div class="controls">
+      <textarea id="description" name="description" placeholder="Description"></textarea>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block footer %}
+<button type="submit" class="btn btn-primary modal-footer-submit">Create Isle</button>
+{{block.super}}
+{% endblock %}
+
+{% block js %}
+{{block.super}}
+{% endblock %}
