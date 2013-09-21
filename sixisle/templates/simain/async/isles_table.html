@@ -17,7 +17,7 @@
       {% for tasks in on_date.tasks %}
         <td>
           {% for task in tasks %}
-            {{task.name}}
+            <a href="#" data-sniper="/dialogs/edit_task/?id={{task.id}}">{{task.name}}</a>
             <br />
           {% endfor %}
         </td>

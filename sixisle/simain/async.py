@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate, login, logout
 from simain.islemanager import *
 import simain.wonderbar as w
 from simain.asyncviews import *
+import simain.othersnipers as os 
+import forms
 
 @sniper.sniper()
 def register(request):
@@ -74,18 +76,35 @@ def _logout(request):
 
 @sniper.sniper()
 def create_isle(request):
-  manager = IsleManager(request.user)
-  manager.add_isle(name=request.POST['name'], desc=request.POST['description'])
-  yield JSCall('hide_modal')
-  message = 'Isle <strong>%s</strong> has been created' % request.POST['name']
-  manager = IsleManager(request.user) 
-  yield IsleTableSniper(manager)
-  yield w.Message(message, w.SUCCESS), None
+  form = forms.CreateIsle(request.POST)
+
+  if form.is_valid():
+    manager = IsleManager(request.user)
+    manager.create_isle_from_form(form)
+    yield os.HideModal()
+    message = 'Isle <strong>%s</strong> has been created' % request.POST['name']
+    yield w.Message(message, w.SUCCESS)
+    yield IsleTableSniper(manager)
+
+  else:
+    yield AlertBoxSniper(form.get_first_error())
 
 @sniper.sniper()
 def create_task(request):
   manager = IsleManager(request.user)
-  yield JSCall('hide_modal')
+  form = forms.CreateTask(manager, request.POST)
+    
+  if form.is_valid():
+    if form.cleaned_data['id'] is not None:
+      manager.update_task_from_form(form)
+    else:
+      manager.create_task_from_form(form)
+
+    yield IsleTableSniper(manager)
+    yield w.Message("task has been created", w.SUCCESS, w.SHORT)
+    yield os.HideModal()
+  else:
+    yield AlertBoxSniper(form.get_first_error())
 
 @sniper.sniper(authenticate=True)
 def del_isle_perm(request):
@@ -118,7 +137,7 @@ def del_isle(request):
   if action == 'delete':
     manager.delete_isle(isle.id)
     data['action'] = 'undo'
-    yield JSCall('hide_modal')
+    yield os.HideModal()
     yield w.Confirm(
       "<strong>%s</strong> has been deleted. " % isle.name, 
       confirm="Undo",
@@ -132,7 +151,7 @@ def del_isle(request):
   elif action == 'undo':
     manager.restore_isle(isle.id)
     data['action'] = 'none'
-    yield JSCall('hide_modal')
+    yield os.HideModal()
     yield IsleTableSniper(manager)
     yield w.Message(
       "Isle <strong>%s</strong> has been restored." % isle.name, 
@@ -142,7 +161,7 @@ def del_isle(request):
 
   elif action == 'confirm':
     data['action'] = 'delete'
-    yield JSCall('hide_modal')
+    yield os.HideModal()
     yield w.Confirm(
      "Are you sure you want to delete isle <strong>%s</strong>?" % isle.name, 
      endpoint="async_del_isle",

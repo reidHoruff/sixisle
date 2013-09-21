@@ -12,18 +12,26 @@ class BaseDialog(InsertTemplate):
   BEFORE_ME = [JSCall('hide_modal')]
   WIDTH = 640
 
-  def __init__(self, args={}):
-    args['modal_id'] = self.NAME
-    args['width'] = self.WIDTH
-    args['margin_left'] = self.WIDTH/(-2)
+  def __init__(self, *args, **kwargs):
+    self.container = self.CONTAINER
+
+    self.args = {}
+    self.args['modal_id'] = self.NAME
+    self.args['width'] = self.WIDTH
+    self.args['margin_left'] = self.WIDTH/(-2)
+    
+    self.construct(*args, **kwargs)
 
     InsertTemplate.__init__(
       self, 
-      self.CONTAINER,
+      self.container,
       self.TEMPLATE_DIR+self.TEMPLATE_NAME, 
       request_context=True, 
-      args=args
+      args=self.args
     )
+
+  def construct(self, *args, **kwargs):
+    pass
 
 
 """
@@ -32,6 +40,12 @@ create isle dialog
 class CreateIsleDialog(BaseDialog):
   NAME = 'create_isle'
   TEMPLATE_NAME = 'create_isle.html'
+  
+  def construct(self, isle=None):
+    form = forms.CreateIsle()
+    if isle:
+      form.set_field_defaults(isle)
+    self.args['form'] = form
 
 @sniper.sniper(authenticate=True)
 def create_isle(request):
@@ -45,15 +59,26 @@ class CreateTaskDialog(BaseDialog):
   NAME = 'create_task'
   TEMPLATE_NAME = 'create_task.html'
 
+  def construct(self, manager, task=None):
+    form = forms.CreateTask(manager)
+
+    if task:
+      form.set_field_defaults(task)
+
+    self.args['form'] = form
+    
+
 @sniper.sniper(authenticate=True)
 def create_task(request):
   manager = IsleManager(request.user)
-  args = {
-    'form': forms.CreateTask(),
-    'isles': manager.gen_isles(), 
-  }
-  yield CreateTaskDialog(args)
+  yield CreateTaskDialog(manager)
 
+@sniper.sniper(authenticate=True)
+def edit_task(request):
+  manager = IsleManager(request.user)
+  id = request.REQUEST['id']
+  task = manager.fetch_task(id)
+  yield CreateTaskDialog(manager, task)
 
 """
 isle info dialog
@@ -61,6 +86,9 @@ isle info dialog
 class IsleInfoDialog(BaseDialog):
   NAME = 'isle_info'
   TEMPLATE_NAME = 'isle_info.html'
+
+  def construct(self, manager):
+    pass
 
   def __init__(self, isle):
     args = {

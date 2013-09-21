@@ -96,4 +96,4 @@ class Task(models.Model):
   date = models.DateField()
 
   def __unicode__(self):
-    return "%s -> %s" % (self.isle.name, self.name)
+    return "(%s) %s -> %s" % (self.id, self.isle.name, self.name)

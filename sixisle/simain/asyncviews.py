@@ -35,3 +35,17 @@ class DeletedIslesListSniper(AsyncViewSniper):
     self.args = {
       'isles': manager.get_deleted_isles(),
     }
+
+ALERT_ERROR = 'alert-error'
+ALERT_SUCCESS = 'alert-success'
+ALERT_INFO = 'alert-info'
+class AlertBoxSniper(AsyncViewSniper):
+  TEMPLATE = 'alert_box.html'
+  DEFAULT_SELECTOR = '#alert-boxes'
+
+  def construct(self, message, alert=ALERT_ERROR, selector='#alert-boxes'):
+    self.selector=selector
+    self.args = {
+      'message': message,
+      'alert_type': alert,
+    }

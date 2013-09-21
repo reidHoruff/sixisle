@@ -17,6 +17,16 @@ class IsleManager(object):
     Isle.objects.create(name=name, description=desc, owner=self.user)
     self.isles = None
 
+  def create_isle_from_form(self, form):
+    data = form.cleaned_data
+
+    Isle.objects.create(
+      name=data['name'], 
+      description=data['desc'], 
+      owner=self.user
+    )
+    self.isles = None
+
   def fetch_isle(self, id):
     return Isle.objects.get(owner=self.user, id=id)
 
@@ -38,6 +48,33 @@ class IsleManager(object):
   def delete_isle_perm(self, id):
     isle = Isle.objects.get(id=id, owner=self.user).delete()
     return isle
+
+  def update_task_from_form(self, form):
+    data = form.cleaned_data
+    task = self.fetch_task(data['id'])
+
+    task.isle = self.fetch_isle(data['isle'])
+    task.name = data['name']
+    task.data = data['date']
+    task.description = data['desc']
+    task.save()
+
+  def create_task_from_form(self, form):
+    data = form.cleaned_data
+    isle = self.fetch_isle(data['isle'])
+    
+    task = Task.objects.create(
+      name=data['name'],
+      isle=isle,
+      owner=self.user,
+      date=data['date'],
+      description=data['desc'],
+    )
+
+    task.save()
+
+  def fetch_task(self, id):
+    return Task.objects.get(owner=self.user, id=id)
 
   def get_deleted_isles(self):
     return Isle.objects.filter(owner=self.user, deleted=True)

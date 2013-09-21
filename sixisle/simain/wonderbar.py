@@ -7,10 +7,15 @@ ERROR = 'wonderbar-type-error'
 DANGER = 'wonderbar-type-error'
 SUCCESS = 'wonderbar-type-success'
 
+LONG = 7000
+MEDIUM = 4000
+SHORT = 2500
+NONE = 0
+
 class Message(BaseSniper):
   IDENTITY = '__wonder_bar_show'
 
-  def __init__(self, html, theme=NOTIFY, autohide=5000):
+  def __init__(self, html, theme=NOTIFY, autohide=MEDIUM):
     self.kwargs = {
       'html': html,
       'theme': theme,
@@ -20,7 +25,7 @@ class Message(BaseSniper):
 class Template(BaseSniper):
   IDENTITY = '__wonder_bar_show'
 
-  def __init__(self, template, args={}, theme=NOTIFY, autohide=5000):
+  def __init__(self, template, args={}, theme=NOTIFY, autohide=MEDIUM):
     self.template = "simain/wonder/"+template
     self.theme = theme
     self.args = args
@@ -36,7 +41,8 @@ class Template(BaseSniper):
     
 class Confirm(Template):
   TEMPLATE = 'confirm.html'
-  def __init__(self, message, endpoint, data={}, confirm="Yes", cancel="Cancel", autohide=0):
+
+  def __init__(self, message, endpoint, data={}, confirm="Yes", cancel="Cancel", autohide=NONE):
     args = {
       'message': message,
       'endpoint': endpoint,

@@ -37,4 +37,5 @@ urlpatterns += patterns('simain.dialogs',
   url(r'^dialogs/create_task/$', 'create_task', name='dialog_create_task'),
   url(r'^dialogs/isle_info/$', 'isle_info', name='dialog_isle_info'),
   url(r'^dialogs/edit_isle/$', 'edit_isle', name='dialog_edit_isle'),
+  url(r'^dialogs/edit_task/$', 'edit_task', name='dialog_edit_task'),
 )

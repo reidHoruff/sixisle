@@ -1,14 +1,14 @@
 from django import forms
 
 class SiForm(forms.Form):
-  def errors(self):
+  def get_errors(self):
     return self.errors.items()[0][1]
 
-  def first_error(self):
-    errors = self.errors()
+  def get_first_error(self):
+    errors = self.get_errors()
 
     if errors:
-      return self.errors()[0]
+      return errors[0]
 
     return None
 
@@ -37,6 +37,14 @@ def text_input(name, min=1, max=100, required=True):
     widget=forms.TextInput(attrs={'placeholder': name}),
   )
   
+def date_input(name, required=True):
+  return field_with_errors(
+    field=forms.CharField,
+    name=name,
+    required=required,
+    widget=forms.TextInput(attrs={'placeholder': name, 'class': 'datepicker'}),
+  )
+
 def select(name, required=True, choices=()):
   return field_with_errors(
     field=forms.ChoiceField,
@@ -54,6 +62,12 @@ def textarea(name, min=1, max=100, required=True):
     max_length=max,
     required=required,
     widget=forms.Textarea(attrs={'placeholder': name}),
+  )
+
+def hidden_integer(required=True):
+  return forms.IntegerField(
+    required=required,
+    widget=forms.HiddenInput(),
   )
 
 class Register(SiForm):
@@ -89,8 +103,30 @@ class Register(SiForm):
   )
 
 class CreateTask(SiForm):
+  def __init__(self, manager, *args, **kwargs):
+    super(SiForm, self).__init__(*args, **kwargs)
+    self.fields['isle'].choices = [(isle.id, isle.name) for isle in manager.gen_isles()]
+
+  def set_field_defaults(self, task):
+    self.fields['name'].initial = task.name    
+    self.fields['desc'].initial = task.description    
+    self.fields['date'].initial = task.date    
+    self.fields['isle'].initial = task.isle.id    
+    self.fields['id'].initial = task.id
+
   name = text_input(name='Task Name')
   desc = textarea(name='Task Description')
-  date = text_input(name='Date')
-  isle = select(name='Isle', choices=(('a','a'), ('b','b')))
+  date = date_input(name='Date')
+  isle = select(name='Isle')
+  id = hidden_integer(required=False)
 
+
+class CreateIsle(SiForm):
+  def set_field_defaults(self, isle):
+    self.fields['name'].initial = task.name    
+    self.fields['desc'].initial = task.description    
+    self.fields['id'].initial = task.id
+
+  name = text_input(name='Task Name')
+  desc = textarea(name='Task Description')
+  id = hidden_integer(required=False)
