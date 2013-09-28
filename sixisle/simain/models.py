@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from simain.dateutils import *
 
 class MyUserManager(BaseUserManager):
 
@@ -57,6 +58,9 @@ class User(AbstractBaseUser):
 
   USERNAME_FIELD = 'email'
 
+  def auth(self):
+    return self.is_authenticated
+
   def is_staff(self):
     return self.is_admin
 
@@ -95,5 +99,40 @@ class Task(models.Model):
   description = models.CharField(max_length=1000)
   date = models.DateField()
 
+  def in_past(self):
+    return date_info(self.date)['in_past']
+
+  def in_future(self):
+    return date_info(self.date)['in_future']
+
+  def next_week(self):
+    return date_info(self.date)['next_week']
+
+  def last_week(self):
+    return date_info(self.date)['last_week']
+
+  def days_due(self):
+    return from_today(self.date) 
+
+  def days_due_pretty(self):
+    days = self.days_due()
+    if days == 0:
+      return "Today"
+    if days == 1:
+      return "Tomorrow"
+    if days == -1:
+      return "Yesterday"
+    if days > 1:
+      return "In %s Days" % days
+    return "%s Days Ago" % abs(days)
+
   def __unicode__(self):
     return "(%s) %s -> %s" % (self.id, self.isle.name, self.name)
+
+class Subtask(models.Model):
+  name = models.CharField(max_length=200)
+  task = models.ForeignKey('Task', related_name='subtasks')
+  owner = models.ForeignKey('User', related_name='all_subtasks')
+  time = models.IntegerField(default=1)
+  completed = models.BooleanField(default=False)
+  description = models.CharField(max_length=1000)

@@ -1,0 +1,19 @@
+#hero {
+  background: #5555ff;
+  height: 400px;
+}
+
+#hero > .container > .left > h1 {
+  font-weight: normal;
+  font-size: 100px;
+}
+
+#hero-2 {
+  background: #444444;
+  height: 1000px;
+}
+
+div.space {
+  height: 1px;
+  background: #111;
+}

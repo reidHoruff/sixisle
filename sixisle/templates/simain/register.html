@@ -1,7 +1,8 @@
 {% extends "simain/base.html" %}
+{% load staticfiles %}
 
 {% block css %}
-  <link href="/static/resources/css/register.css" type="text/css" rel="stylesheet" />
+  <link href="{% static 'simain/resources/css/register.css' %}" type="text/css" rel="stylesheet" />
 {% endblock %}
 
 
@@ -9,19 +10,13 @@
   <h2>Register</h2>
   <form method="POST" action="{% url 'async_register' %}" data-sniper="true">
     {% csrf_token %}
-    <p id="messages"></p>
-    <label>email</label>
     <br />
     {{form.email}}
     <br />
-    <label>password</label>
-    <br />
     {{form.password1}}
-    <br />
-    <label>confirm password</label>
     <br />
     {{form.password2}}
     <br />
-    <input class="btn" type="submit" value="register" />
+    <input class="btn btn-success" type="submit" value="register" />
   <form />
 {% endblock %}

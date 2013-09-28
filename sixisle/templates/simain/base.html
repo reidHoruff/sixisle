@@ -33,14 +33,14 @@
               <a id="logo-link" href="/"><h4>6ISLE</h4></a>
             </li>
             <li>
-              {% if user.is_authenticated %}
+              {% if user.auth %}
                 <a href="{% url 'view_isles' %}">isles</a>
               {% endif %}
             </li>
           </ul>
           <ul class="nav pull-right" id="nav-list-right">
             <li class="nav">
-              {% if user.is_authenticated %}
+              {% if user.auth %}
                 <a href="#" data-sniper="/async/logout/">logout</a>
               {% else %}
                 <a href="/login/">login</a>
@@ -55,9 +55,11 @@
 
     <div id="wonderbar-offset"></div>
 
-    <div id="container" class="container-fluid">
-      {% block container %}{% endblock %}
-    <div />
+    {% block uncontained %}
+      <div id="container" class="container-fluid">
+        {% block container %}{% endblock %}
+      <div />
+    {% endblock %}
 
     <div id="dialogs"></div>
 

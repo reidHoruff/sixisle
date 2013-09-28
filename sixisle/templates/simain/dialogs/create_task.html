@@ -1,7 +1,11 @@
 {% extends "simain/dialogs/base.html" %}
 
 {% block header %}
-<h4>Create a New Task</h4>
+  {% if task %}
+    <h4>{{task.name}} <span class="right i">Due {{task.days_due_pretty}}</span></h4>
+  {% else %}
+    <h4>Create a New Task</h4>
+  {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -40,7 +44,11 @@
 {% endblock %}
 
 {% block footer %}
-<button type="submit" class="btn btn-primary modal-footer-submit">Create Task</button>
+  {% if task %}
+    <button type="submit" class="btn btn-primary modal-footer-submit">Save Task</button>
+  {% else %}
+    <button type="submit" class="btn btn-primary modal-footer-submit">Create Task</button>
+  {% endif %}
 {{block.super}}
 {% endblock %}
 

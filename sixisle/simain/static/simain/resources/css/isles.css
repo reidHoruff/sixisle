@@ -9,3 +9,39 @@ table.fixed {
 #isles-table {
   margin-top: 20px;
 }
+
+table#isles > tbody > tr > td.date-col > span > shy {
+  float: right;
+  font-size:12px;
+  color: gray;
+}
+
+table#isles > tbody > tr > td > a {
+  color: black;
+}
+
+table#isles > tbody > tr.in_past > td > span {
+  color: gray;
+}
+
+table#isles > tbody > tr.in_past > td > a {
+  color: gray;
+}
+
+table#isles > tbody > tr.is_today {
+  background: #f0f0fa;
+}
+
+table#isles > tbody > tr.is_today > td > span {
+  color: green;
+}
+
+table#isles > tbody > tr.is_today > td > span > shy {
+  color: green;
+}
+
+table#isles > tbody > tr.same_week > td > span {
+}
+
+
+

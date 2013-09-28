@@ -11,31 +11,14 @@ from simain.asyncviews import *
 import simain.othersnipers as os 
 import forms
 
-@sniper.sniper()
+@sniper.ajax()
 def register(request):
-  message = lambda m: InsertText('#messages', m)
+  form = forms.Register(request.POST)
 
-  yield InsertText('#messages', '')
-
-  if request.method != 'POST':
-    yield message('error'), None
-
-  password1 = request.POST['password1']
-  password2 = request.POST['password2']
-  username = request.POST['username']
-
-  if not username:
-    yield message('Username Required'), None
-
-  if len(username) < 3: 
-    yield message('Username too short'), None
-
-  if not password1:
-    yield message('Password Required'), None
-
-  if password1 != password2:
-    yield message('passwords do not match'), None
-
+  if form.is_valid():
+    yield w.Message('success', w.ERROR), None
+  else:
+    yield w.Message(form.get_first_error(), w.ERROR)
 
   try:
     user = User.objects.create_user(
@@ -46,42 +29,43 @@ def register(request):
   except:
     user = None
 
-  if not user:
-      yield message("Username already in use"), None
-
-@sniper.sniper()
+@sniper.ajax()
 def _login(request):
-  message = lambda m: InsertText('#messages', m)
+  form = forms.LoginForm(request.POST)
 
-  yield InsertText('#messages', '')
+  if form.is_valid():
+    email = form.cleaned_data['email']
+    if email == 'root':
+      email = 'root@root.com'
+    password = form.cleaned_data['password']
+    user = authenticate(username=email, password=password)
 
-  if request.method != 'POST':
-    yield message('error'), None
+    if user and user.is_active:
+      login(request, user)
+      n = form.cleaned_data['next']
+      if n:
+        yield RedirectBrowser(n), None
+      else:
+        yield RedirectBrowser('/profile/'), None
 
-  password = request.POST['password']
-  username = request.POST['username']
-  user = authenticate(username=username, password=password)
+  yield w.Message('Sorry, that login is invalid :(', w.ERROR)
 
-  if user and user.is_active:
-    login(request, user)
-    yield RedirectBrowser('/profile/')
-
-  else:
-    yield w.Message('Sorry, that login is invalid :(', w.ERROR), None
-
-@sniper.sniper()
+@sniper.ajax()
 def _logout(request):
   logout(request)
-  yield RefreshBrowser()
+  n = request.REQUEST.get('next')
+  if n:
+    yield RedirectBrowser(n)
+  else:
+    yield RefreshBrowser()
 
-@sniper.sniper()
+@sniper.ajax()
 def create_isle(request):
   form = forms.CreateIsle(request.POST)
 
   if form.is_valid():
     manager = IsleManager(request.user)
     manager.create_isle_from_form(form)
-    yield os.HideModal()
     message = 'Isle <strong>%s</strong> has been created' % request.POST['name']
     yield w.Message(message, w.SUCCESS)
     yield IsleTableSniper(manager)
@@ -89,7 +73,7 @@ def create_isle(request):
   else:
     yield AlertBoxSniper(form.get_first_error())
 
-@sniper.sniper()
+@sniper.ajax()
 def create_task(request):
   manager = IsleManager(request.user)
   form = forms.CreateTask(manager, request.POST)
@@ -97,24 +81,25 @@ def create_task(request):
   if form.is_valid():
     if form.cleaned_data['id'] is not None:
       manager.update_task_from_form(form)
+      message = "Task has been updated."
     else:
       manager.create_task_from_form(form)
+      message = "Task has been created."
 
     yield IsleTableSniper(manager)
-    yield w.Message("task has been created", w.SUCCESS, w.SHORT)
-    yield os.HideModal()
+    yield w.Message(message, w.SUCCESS, w.SHORT)
   else:
     yield AlertBoxSniper(form.get_first_error())
 
-@sniper.sniper(authenticate=True)
+@sniper.ajax(authenticate=True)
 def del_isle_perm(request):
   id = request.REQUEST['id']
   manager = IsleManager(request.user)
-  manager.delete_isle_perm(id)
+ # manager.delete_isle_perm(id)
   yield DeletedIslesListSniper(manager)
   yield w.Message("Isle has been deleted.", w.SUCCESS)
 
-@sniper.sniper(authenticate=True)
+@sniper.ajax(authenticate=True)
 def restore_isle(request):
   id = request.REQUEST['id']
   manager = IsleManager(request.user)
@@ -122,7 +107,15 @@ def restore_isle(request):
   yield DeletedIslesListSniper(manager)
   yield w.Message("Isle has been Restored.", w.SUCCESS)
 
-@sniper.sniper(authenticate=True)
+@sniper.ajax(authenticate=True)
+def del_task(request):
+  id = request.REQUEST['id']
+  manager = IsleManager(request.user)
+  manager.delete_task(id)
+  yield IsleTableSniper(manager)
+  yield w.Message("Task has been Deleted", w.SUCCESS)
+
+@sniper.ajax(authenticate=True)
 def del_isle(request):
   id = request.REQUEST['id']
   manager = IsleManager(request.user)
@@ -137,7 +130,6 @@ def del_isle(request):
   if action == 'delete':
     manager.delete_isle(isle.id)
     data['action'] = 'undo'
-    yield os.HideModal()
     yield w.Confirm(
       "<strong>%s</strong> has been deleted. " % isle.name, 
       confirm="Undo",
@@ -151,7 +143,6 @@ def del_isle(request):
   elif action == 'undo':
     manager.restore_isle(isle.id)
     data['action'] = 'none'
-    yield os.HideModal()
     yield IsleTableSniper(manager)
     yield w.Message(
       "Isle <strong>%s</strong> has been restored." % isle.name, 
@@ -160,8 +151,8 @@ def del_isle(request):
     yield None
 
   elif action == 'confirm':
+    yield JSLog('yea bitch')
     data['action'] = 'delete'
-    yield os.HideModal()
     yield w.Confirm(
      "Are you sure you want to delete isle <strong>%s</strong>?" % isle.name, 
      endpoint="async_del_isle",

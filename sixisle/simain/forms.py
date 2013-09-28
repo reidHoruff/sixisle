@@ -36,6 +36,31 @@ def text_input(name, min=1, max=100, required=True):
     required=required,
     widget=forms.TextInput(attrs={'placeholder': name}),
   )
+
+def hidden_input():
+  return forms.CharField(
+    widget=forms.HiddenInput(),
+  )
+
+def password_input(name, min=1, max=100, required=True):
+  return field_with_errors(
+    field=forms.CharField,
+    name=name,
+    min_length=min,
+    max_length=max,
+    required=required,
+    widget=forms.PasswordInput(attrs={'placeholder': name}),
+  )
+
+def email_input(name, min=1, max=100, required=True):
+  return field_with_errors(
+    field=forms.EmailField,
+    name=name,
+    min_length=min,
+    max_length=max,
+    required=required,
+    widget=forms.TextInput(attrs={'placeholder': name}),
+  )
   
 def date_input(name, required=True):
   return field_with_errors(
@@ -71,36 +96,9 @@ def hidden_integer(required=True):
   )
 
 class Register(SiForm):
-  password1 = PasswordField(
-    min_length=2,
-    max_length=50,
-    error_messages={
-      'invalid': 'First name is Invalid.',
-      'required': 'First name is Required',
-      'min_length': 'First name is too short',
-      'max_length': 'First name is too long',
-    }
-  )
-
-  password2 = PasswordField(
-    min_length=2,
-    max_length=50,
-    error_messages={
-      'invalid': 'First name is Invalid.',
-      'required': 'First name is Required',
-      'min_length': 'First name is too short',
-      'max_length': 'First name is too long',
-    }
-  )
-
-  email = forms.EmailField(
-    error_messages={
-      'invalid': 'Email is Invalid.',
-      'required': 'Email is Required',
-      'min_length': 'Email is too short',
-      'max_length': 'Email is too long',
-    }
-  )
+  password1 = password_input(name='Password')
+  password2 = password_input(name='Confirm Password')
+  email = email_input(name='Email') 
 
 class CreateTask(SiForm):
   def __init__(self, manager, *args, **kwargs):
@@ -115,7 +113,7 @@ class CreateTask(SiForm):
     self.fields['id'].initial = task.id
 
   name = text_input(name='Task Name')
-  desc = textarea(name='Task Description')
+  desc = textarea(name='Task Description', max=2000)
   date = date_input(name='Date')
   isle = select(name='Isle')
   id = hidden_integer(required=False)
@@ -130,3 +128,11 @@ class CreateIsle(SiForm):
   name = text_input(name='Task Name')
   desc = textarea(name='Task Description')
   id = hidden_integer(required=False)
+
+class LoginForm(SiForm):
+  def set_next(self, next):
+    self.fields['next'].initial = next
+
+  email = text_input(name='Email')
+  password = password_input(name='Password')
+  next = hidden_input()

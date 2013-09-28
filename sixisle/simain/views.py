@@ -9,83 +9,45 @@ from simain.islemanager import *
 from simain.asyncviews import *
 import templateresponses as tr
 import simain.forms as forms
+from django.contrib.auth.decorators import login_required
 
-@context_template_response
+class Template(TemplateResponse):
+  TEMPLATE_DIR = 'simain/'
+  
+  def __init__(self, template, *args, **kwargs):
+    template = self.TEMPLATE_DIR + template
+    TemplateResponse.__init__(self, template, request_context=True, *args, **kwargs)
+
+@sniper.template()
 def view_home(request):
-  return 'simain/home.html'
+  yield Template('home.html')
 
-@context_template_response
+@sniper.template()
 def register(request):
-  return 'simain/register.html', {'form': forms.Register}
+  yield Template('register.html').set(form=forms.Register())
 
-@context_template_response
+@sniper.template()
 def login(request):
-  return 'simain/login.html'
+  n = request.REQUEST.get('next')
+  form = forms.LoginForm()
+  form.set_next(n)
+  yield Template('login.html').set(form=form, next=n)
 
-@context_template_response
+@login_required
+@sniper.template()
 def profile(request):
-  return 'simain/profile.html'
+  yield TemplateResponse('simain/profile.html', request_context=True)
 
-@sniper.sniper(authenticate=True)
+@login_required
+@sniper.template()
 def isles(request):
   manager = IsleManager(request.user) 
-  yield TemplateResponse('simain/isles.html', request_context=True)
+  yield Template('isles.html')
   yield IsleTableSniper(manager)
 
-@sniper.sniper()
+@login_required
+@sniper.template()
 def deleted(request):
   manager = IsleManager(request.user)
   yield tr.DeletedIslesTemplateResponse()
   yield DeletedIslesListSniper(manager)
-
-@sniper.sniper()
-def sniper_test(request):
-  yield JSLog("im inserting text", "reid", 1, ['foo'])
-  yield InsertTemplate("#container", "content.html")
-  yield PushState("bar")
-
-  if not request.is_ajax():
-    yield TemplateResponse("simain/home.html")
-
-def sniper_template(request):
-  args = {
-    'id': 0,
-    'title': 'this is the root',
-    'body': 'hey yall',
-  }
-
-  yield InsertTemplate(
-    "#comments", 
-    "simain/comment.html", 
-    args, 
-    context_instance=RequestContext(request)
-  )
-  yield TemplateResponse("simain/sniper.html", context_instance=RequestContext(request))
-
-@sniper.sniper()
-def submit_comment(request):
-  title = request.POST['title']
-  body = request.POST['body']
-  id = request.POST['id']
-
-  if not title:
-    yield InsertText("#errors-"+id, "<p class='error'>title is empty</p>"), None
-
-  if not body:
-    yield InsertText("#errors-"+id, "<p class='error'>body is empty</p>"), None
-
-  yield DeleteFromDOM(".error")
-
-  args = {
-    'id': int(id)+1,
-    'title': title,
-    'body': body,
-  }
-
-  yield AppendTemplate(
-    "#comment-%s-children" % id, 
-    "simain/comment.html", 
-    args, 
-    context_instance=RequestContext(request),
-  )
-

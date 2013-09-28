@@ -1,19 +1,22 @@
-{% load sniper_onload %}
-<html>
-  <head>
-    {% snipe_on_load %}
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="/static/resources/js/sniper.js"></script>
-  </head>
+{% extends "simain/base.html" %}
+{% load staticfiles %}
 
-  <body>
-    <a href="#" data-sniper="/snipertest/">click me to insert content...</a>
+{% block css %}
+  <link href="{% static 'simain/resources/css/home.css' %}" type="text/css" rel="stylesheet" />
+{% endblock %}
 
-    <div id="container"></div>
-
-    <script>
-      var s = new Sniper();
-    </script>
-  </body>
-
-</html>
+{% block uncontained %}
+<div id="hero">
+  <div class="container">
+    <div class="span6 left center">
+      <h1>6isle</h1>
+    </div>
+    <div class="span6 right center">
+      <a href="/register/" class="btn btn-large btn-success">Sign Up Now!</a>
+    </div>
+  </div>
+</div>
+<div class="space"></div>
+<div id="hero-2">
+</div>
+{% endblock %}

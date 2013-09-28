@@ -1,4 +1,5 @@
 from simain.models import *
+from simain.dateutils import *
 
 class IsleManager(object):
   
@@ -45,6 +46,10 @@ class IsleManager(object):
     isle.deleted = True
     isle.save()
 
+  def delete_task(self, id):
+    task = Task.objects.get(id=id, owner=self.user)
+    task.delete()
+
   def delete_isle_perm(self, id):
     isle = Isle.objects.get(id=id, owner=self.user).delete()
     return isle
@@ -80,49 +85,54 @@ class IsleManager(object):
     return Isle.objects.filter(owner=self.user, deleted=True)
 
   def get_table(self):
+    """
+    BRACE YOURSELVES
+    """
     all_tasks = self.user.get_all_tasks()
+    isles = self.gen_isles()
 
     if not all_tasks:
       return []
 
     isle_ranking = {
-      isle.id: index for index, isle in enumerate(self.gen_isles())
+      isle.id: index for index, isle in enumerate(isles)
     }
 
     for_date = []
     same_date = []
     cur_group_date = None
+    info = {}
+    had_present = False
 
     for task in all_tasks:
       if task.date != cur_group_date:
         if same_date:
+          info = date_info(cur_group_date)
+          had_present |= info['is_today']
           for_date.append({
             'date': cur_group_date,
             'tasks': same_date,
+            'props': [k for k, v in info.iteritems() if v],
           })
-        same_date = [[] for x in range(len(self.gen_isles()))]
+        same_date = [[] for x in isles]
         cur_group_date = task.date
+
+        if date_info(cur_group_date)['in_future'] and not had_present:
+          had_present = True
+          for_date.append({
+            'date': today(),
+            'tasks': [[] for x in isles],
+            'props': ['is_today'],
+          })
 
       same_date[isle_ranking[task.isle.id]].append(task)
 
+    info = date_info(cur_group_date)
     if same_date:
       for_date.append({
         'date': cur_group_date,
         'tasks': same_date,
+        'props': [k for k, v in info.iteritems() if v],
       })
 
     return for_date
-
-
-
-    for_date_sorted = []
-
-    for on_date in for_date:  
-      for_date_sorted.append(
-        sorted(
-          on_date,
-          cmp=lambda a, b: isle_ranking[a.id] - isle_ranking[b.id]
-        )
-      )
-
-    return for_date_sorted

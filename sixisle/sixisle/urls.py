@@ -9,9 +9,6 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('simain.views',
   url(r'^$', 'view_home', name='home'),
-  url(r'^snipertest/$', 'sniper_test', name='sniper_test'),
-  url(r'^submit_comment/$', 'submit_comment', name='submit_comment'),
-  url(r'^snipertemplate/$', 'sniper_template', name='sniper_template'),
   url(r'^register/$', 'register', name='view_register'),
   url(r'^login/$', 'login', name='view_login'),
   url(r'^profile/$', 'profile', name='view_profile'),
@@ -29,6 +26,7 @@ urlpatterns += patterns('simain.async',
   url(r'^async/del_isle/$', 'del_isle', name='async_del_isle'),
   url(r'^async/del_isle_perm/$', 'del_isle_perm', name='async_del_isle_perm'),
   url(r'^async/restore_isle/$', 'restore_isle', name='restore_isle'),
+  url(r'^async/del_task/$', 'del_task', name='async_del_task'),
 )
 
 #dialogs
@@ -38,4 +36,5 @@ urlpatterns += patterns('simain.dialogs',
   url(r'^dialogs/isle_info/$', 'isle_info', name='dialog_isle_info'),
   url(r'^dialogs/edit_isle/$', 'edit_isle', name='dialog_edit_isle'),
   url(r'^dialogs/edit_task/$', 'edit_task', name='dialog_edit_task'),
+  url(r'^dialogs/view_task/$', 'view_task', name='dialog_view_task'),
 )

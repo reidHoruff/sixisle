@@ -30,6 +30,10 @@ class BaseDialog(InsertTemplate):
       args=self.args
     )
 
+  def set(self, **kwargs):
+    for k, v in kwargs.iteritems():
+      self.args[k] = v
+
   def construct(self, *args, **kwargs):
     pass
 
@@ -47,13 +51,28 @@ class CreateIsleDialog(BaseDialog):
       form.set_field_defaults(isle)
     self.args['form'] = form
 
-@sniper.sniper(authenticate=True)
+@sniper.ajax(authenticate=True)
 def create_isle(request):
   yield CreateIsleDialog()
 
+"""
+view task
+"""
+class ViewTaskDialog(BaseDialog):
+  NAME = 'view_task'
+  TEMPLATE_NAME = 'view_task.html'
+
+  def construct(self, task):
+    self.set(task=task)
+
+@sniper.ajax(authenticate=True)
+def view_task(request):
+  id = request.GET['id']
+  manager = IsleManager(request.user)
+  yield ViewTaskDialog(manager.fetch_task(id))
 
 """
-create isle task
+create task
 """
 class CreateTaskDialog(BaseDialog):
   NAME = 'create_task'
@@ -63,17 +82,17 @@ class CreateTaskDialog(BaseDialog):
     form = forms.CreateTask(manager)
 
     if task:
+      self.set(task=task)
       form.set_field_defaults(task)
 
-    self.args['form'] = form
-    
+    self.set(form=form)
 
-@sniper.sniper(authenticate=True)
+@sniper.ajax(authenticate=True)
 def create_task(request):
   manager = IsleManager(request.user)
   yield CreateTaskDialog(manager)
 
-@sniper.sniper(authenticate=True)
+@sniper.ajax(authenticate=True)
 def edit_task(request):
   manager = IsleManager(request.user)
   id = request.REQUEST['id']
@@ -87,18 +106,14 @@ class IsleInfoDialog(BaseDialog):
   NAME = 'isle_info'
   TEMPLATE_NAME = 'isle_info.html'
 
-  def construct(self, manager):
-    pass
+  def construct(self, isle):
+    self.set(
+      name=isle.name,
+      description = isle.description,
+      id=isle.id,
+    )
 
-  def __init__(self, isle):
-    args = {
-      'name': isle.name,
-      'description': isle.description,
-      'id': isle.id,
-    }
-    BaseDialog.__init__(self, args)
-
-@sniper.sniper(authenticate=True)
+@sniper.ajax(authenticate=True)
 def isle_info(request):
   manager = IsleManager(request.user)
   isle = manager.fetch_isle(request.GET['id'])
@@ -119,7 +134,7 @@ class EditIsleInfoDialog(BaseDialog):
     }
     BaseDialog.__init__(self, args)
 
-@sniper.sniper(authenticate=True)
+@sniper.ajax(authenticate=True)
 def edit_isle(request):
   manager = IsleManager(request.user)
   isle = manager.fetch_isle(request.GET['id'])

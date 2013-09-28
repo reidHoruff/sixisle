@@ -5,8 +5,12 @@
 {% endblock %}
 
 {% block container %}
-  <h2>profile</h2>
-  username: {{user.username}}
-  <br />
-  is happy: {{user.talk}}
+  <div class="row">
+    <div class="offset1 span4">
+      <h2>profile</h2>
+      <p><b>email:</b> {{user.email}}</p>
+      <p><b>first name:</b> {{user.first_name}}</p>
+      <p><b>last name:</b> {{user.last_name}}</p>
+    </div>
+  </div>
 {% endblock %}

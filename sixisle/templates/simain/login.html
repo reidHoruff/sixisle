@@ -1,23 +1,25 @@
 {% extends "simain/base.html" %}
+{% load staticfiles %}
 
 {% block css %}
-  <link href="/static/resources/css/login.css" type="text/css" rel="stylesheet" />
+  <link href="{% static 'simain/resources/css/login.css' %}" type="text/css" rel="stylesheet" />
 {% endblock %}
 
 
 {% block container %}
-  <h2>Login</h2>
-  <form method="POST" action="{% url 'async_login' %}" data-sniper="true">
-    {% csrf_token %}
-    <p id="messages"></p>
-    <label>username</label>
-    <br />
-    <input type="text" name="username" />
-    <br />
-    <label>password</label>
-    <br />
-    <input type="password" name="password" />
-    <br />
-    <input type="submit" />
-  <form />
+  <div id="login" class="center">
+    {% if next %} 
+      <h4 id="sorry">Sorry, you must be logged in to view this page.</h4>
+    {% endif %}
+    <h2>Login</h2>
+    <form method="POST" action="{% url 'async_login' %}" data-sniper="true">
+      {% csrf_token %}
+      {{form.email}}
+      <br />
+      {{form.password}}
+      <br />
+      <button class="btn btn-success" type="submit" >login</button>
+      {{form.next}}
+    <form />
+  </div>
 {% endblock %}

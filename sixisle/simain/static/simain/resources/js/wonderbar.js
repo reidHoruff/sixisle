@@ -20,7 +20,7 @@ function WonderBar() {
       $("#wonderbar").attr('class', theme);
       $('#wonderbar-content').html(html);
       $('#wonderbar').slideDown();
-      $('#wonderbar-offset').slideDown();
+//      $('#wonderbar-offset').slideDown();
       this.shown = true;
 
       if (show_delay > 0) {
@@ -37,7 +37,7 @@ function WonderBar() {
 
   this.hide = function() {
     $('#wonderbar').slideUp();
-    $('#wonderbar-offset').slideUp();
+//    $('#wonderbar-offset').slideUp();
     this.shown = false;
   }
 }

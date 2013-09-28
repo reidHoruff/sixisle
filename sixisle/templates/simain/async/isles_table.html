@@ -1,3 +1,5 @@
+{% load simain %}
+
 <table id="isles" class="table table-bordered fixed">
   <thead>
     <tr>
@@ -10,14 +12,14 @@
 
   <tbody>
   {% for on_date in tasks %}
-    <tr>
-      <td>
-        {{on_date.date|date:"l F, j"}}
+    <tr class="{% for p in on_date.props %}{{p}} {% endfor %}">
+      <td class="date-col">
+        {% smart_date on_date.date %}
       </td>
       {% for tasks in on_date.tasks %}
-        <td>
+        <td class="{% if tasks %}nonempty{% endif %} task-col">
           {% for task in tasks %}
-            <a href="#" data-sniper="/dialogs/edit_task/?id={{task.id}}">{{task.name}}</a>
+            <a href="#" data-sniper="/dialogs/view_task/?id={{task.id}}">{{task.name}}</a>
             <br />
           {% endfor %}
         </td>
